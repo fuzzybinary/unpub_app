@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'game_list.dart';
+import 'screens/game_list.dart';
+import 'screens/feedback_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,8 +27,21 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  List<Tab> _tabs = [
+    Tab(
+      text: 'Games',
+    ),
+    Tab(
+      text: 'Events',
+    ),
+    Tab(
+      text: 'Feedback',
+    )
+  ];
   int _counter = 0;
+  TabController _tabController;
 
   void _incrementCounter() {
     setState(() {
@@ -36,13 +50,38 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: _tabs.length);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tabController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: _tabs,
+        ),
       ),
-      body: Center(
-        child: GameList()
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          _buildGameList(),
+          Center(
+            child: Text('Events'),
+          ),
+          Center(
+            child: FeedbackScreen()
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
@@ -50,5 +89,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Widget _buildGameList() {
+    return Center(child: GameList());
   }
 }
