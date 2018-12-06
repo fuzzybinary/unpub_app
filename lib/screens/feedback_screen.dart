@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:unpub/screens/feedback_screen_bloc.dart';
 
 class FeedbackScreen extends StatefulWidget {
   @override
@@ -7,64 +8,38 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
-  bool _didWin;
-  set didWin(bool value) {
-    setState(() {
-      _didWin = value;
-    });
-  }
-
-  double _gameLength = 3;
-  set gameLength(double value) {
-    setState(() {
-      _gameLength = value;
-    });
-  }
-
-  double _easeOfLearning = 3;
-  set easeOfLearning(double value) {
-    setState(() {
-      _easeOfLearning = value;
-    });
-  }
-
-  double _playerDownTime = 3;
-  set playerDownTime(double value) {
-    setState(() {
-      _playerDownTime = value;
-    });
-  }
-
-  double _gameDecisions = 3;
-  set gameDecisions(double value) {
-    setState(() {
-      _gameDecisions = value;
-    });
-  }
-
-  double _interactivity = 3;
-  set interactivity(double value) {
-    setState(() {
-      _interactivity = value;
-    });
-  }
-
-  double _originality = 3;
-  set originality(double value) {
-    setState(() {
-      _originality = value;
-    });
-  }
+  FeedbackScreenBloc bloc = FeedbackScreenBloc();
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.all(10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildFirstPage(context),
-            _buildSecondPage(context)
+            Text('Game Session Overview', style: theme.textTheme.headline),
+            Container(
+              decoration:
+                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
+              padding: EdgeInsets.all(10),
+              child: _buildFirstPage(context),
+            ),
+            Text('Game Ratings', style: theme.textTheme.headline),
+            Container(
+              decoration:
+                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
+              padding: EdgeInsets.all(10),
+              child: _buildSecondPage(context),
+            ),
+            Text('Game Comments', style: theme.textTheme.headline),
+            Container(
+              decoration:
+                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
+              padding: EdgeInsets.all(10),
+              child: _buildThirdPage(context),
+            ),
           ],
         ),
       ),
@@ -78,9 +53,15 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     return Colors.transparent;
   }
 
+  void _onDidWin(DiscreetAnswer didWin) {
+    setState(() {
+      bloc.didWin = didWin == DiscreetAnswer.Yes;
+    });
+  }
+
   Widget _buildFirstPage(BuildContext context) {
-    final theme = Theme.of(context);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         TextFormField(
           decoration: InputDecoration(
@@ -106,27 +87,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             icon: Icon(Icons.timeline),
           ),
         ),
-        Row(
-          children: <Widget>[
-            Text(
-              'Did you win?',
-              style: theme.textTheme.headline,
-            ),
-            ButtonBar(
-              children: <Widget>[
-                RaisedButton(
-                  child: Text('Yes'),
-                  color: _selectedColor(theme, _didWin),
-                  onPressed: () => didWin = true,
-                ),
-                RaisedButton(
-                  child: Text('No'),
-                  color: _selectedColor(theme, _didWin == null ? null : !_didWin),
-                  onPressed: () => didWin = false,
-                )
-              ],
-            ),
-          ],
+        _buildChoiceButtonBar(
+          context: context,
+          label: 'Did you win?',
+          value: bloc.didWin ? DiscreetAnswer.Yes : DiscreetAnswer.No,
+          onChange: _onDidWin,
+          includeMaybe: false,
         )
       ],
     );
@@ -148,46 +114,160 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           max: 5,
           divisions: 4,
           value: value,
-          onChanged: onChanged,
+          onChanged: (value) {
+            setState(() {
+              onChanged(value);
+            });
+          },
         )
       ],
     );
   }
 
-  Widget _buildSecondPage(BuildContext context) {
+  Widget _buildChoiceButtonBar(
+      {@required BuildContext context,
+      @required DiscreetAnswer value,
+      @required String label,
+      @required ValueChanged<DiscreetAnswer> onChange,
+      bool includeMaybe = true}) {
     final theme = Theme.of(context);
+    final buttons = <Widget>[];
+    buttons.add(RaisedButton(
+      child: Text('Yes'),
+      color: _selectedColor(theme, value == DiscreetAnswer.Yes),
+      onPressed: () {
+        setState(() {
+          onChange(DiscreetAnswer.Yes);
+        });
+      },
+    ));
+    if (includeMaybe) {
+      buttons.add(
+        RaisedButton(
+          child: Text('Maybe'),
+          color: _selectedColor(theme, value == DiscreetAnswer.Maybe),
+          onPressed: () {
+            setState(() {
+              onChange(DiscreetAnswer.Maybe);
+            });
+          },
+        ),
+      );
+    }
+    buttons.add(
+      RaisedButton(
+        child: Text('No'),
+        color: _selectedColor(theme, value == DiscreetAnswer.No),
+        onPressed: () {
+          setState(() {
+            onChange(DiscreetAnswer.No);
+          });
+        },
+      ),
+    );
     return Column(
-      
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: theme.textTheme.headline,
+        ),
+        ButtonBar(
+          alignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: buttons,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSecondPage(BuildContext context) {
+    return Column(
       children: <Widget>[
         _buildRaitingSlider(
           text: 'Game Length',
-          value: _gameLength,
-          onChanged: (value) => gameLength = value,
+          value: bloc.gameLength,
+          onChanged: (value) => bloc.gameLength = value,
         ),
         _buildRaitingSlider(
           text: 'Ease of Learning',
-          value: _easeOfLearning,
-          onChanged: (value) => easeOfLearning = value,
+          value: bloc.easeOfLearning,
+          onChanged: (value) => bloc.easeOfLearning = value,
         ),
         _buildRaitingSlider(
           text: 'Player Down Time',
-          value: _playerDownTime,
-          onChanged: (value) => playerDownTime = value,
+          value: bloc.playerDownTime,
+          onChanged: (value) => bloc.playerDownTime = value,
         ),
         _buildRaitingSlider(
           text: 'Game Decisions',
-          value: _gameDecisions,
-          onChanged: (value) => gameDecisions = value,
+          value: bloc.gameDecisions,
+          onChanged: (value) => bloc.gameDecisions = value,
         ),
         _buildRaitingSlider(
           text: 'Interactivity',
-          value: _interactivity,
-          onChanged: (value) => interactivity = value,
+          value: bloc.interactivity,
+          onChanged: (value) => bloc.interactivity = value,
         ),
         _buildRaitingSlider(
           text: 'Originality',
-          value: _originality,
-          onChanged: (value) => originality = value,
+          value: bloc.originality,
+          onChanged: (value) => bloc.originality = value,
+        ),
+        _buildRaitingSlider(
+          text: 'Fun / Enjoyable',
+          value: bloc.fun,
+          onChanged: (value) => bloc.fun = value,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildThirdPage(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _buildChoiceButtonBar(
+          context: context,
+          label: 'Was the end of the game predictable?',
+          value: bloc.endPredictable,
+          onChange: _onDidWin,
+        ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'If yes, why?'
+          ),
+          maxLines: 5,
+        ),
+        _buildChoiceButtonBar(
+          context: context,
+          label: 'Would you play again',
+          value: bloc.playAgain,
+          onChange: _onDidWin,
+        ),
+        _buildChoiceButtonBar(
+          context: context,
+          label: 'Would you buy this',
+          value: bloc.buy,
+          onChange: _onDidWin,
+        ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'What is one thing you would change?'
+          ),
+          maxLines: 5,
+        ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Wat was your favorite part of this game?'
+          ),
+          maxLines: 5,
+        ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Additional comments?'
+          ),
+          maxLines: 5,
         ),
       ],
     );
