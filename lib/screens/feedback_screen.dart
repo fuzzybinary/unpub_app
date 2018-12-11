@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:unpub/screens/feedback_screen_bloc.dart';
+import 'package:unpub/screens/game_list_screen.dart';
 
 class FeedbackScreen extends StatefulWidget {
   @override
@@ -17,27 +18,35 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       child: Container(
         padding: EdgeInsets.all(10),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Text('Game', style: theme.textTheme.headline),
+            Container(
+              decoration:
+                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.all(20),
+              child: _buildGameTitle(),
+            ),
             Text('Game Session Overview', style: theme.textTheme.headline),
             Container(
               decoration:
                   BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(20),
               child: _buildFirstPage(context),
             ),
             Text('Game Ratings', style: theme.textTheme.headline),
             Container(
               decoration:
                   BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(20),
               child: _buildSecondPage(context),
             ),
             Text('Game Comments', style: theme.textTheme.headline),
             Container(
               decoration:
                   BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(20),
               child: _buildThirdPage(context),
             ),
           ],
@@ -48,7 +57,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   Color _selectedColor(ThemeData theme, bool isSelected) {
     if (isSelected != null && isSelected) {
-      return theme.primaryColor;
+      return theme.accentColor;
     }
     return Colors.transparent;
   }
@@ -57,6 +66,25 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     setState(() {
       bloc.didWin = didWin == DiscreetAnswer.Yes;
     });
+  }
+
+  Widget _buildGameTitle() {
+    final title = bloc.selectedGame?.game ?? 'Select Game';
+    final theme = Theme.of(context);
+    return FlatButton(
+      child: Text(
+        title,
+        style: theme.textTheme.display1,
+      ),
+      onPressed: () async {
+        final newGame = await Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => GameListScreen(forSelection: true),
+        ));
+        if (newGame != null) {
+          bloc.selectedGame = newGame;
+        }
+      },
+    );
   }
 
   Widget _buildFirstPage(BuildContext context) {
@@ -102,6 +130,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       {@required String text,
       @required double value,
       @required ValueChanged<double> onChanged}) {
+    final theme = Theme.of(context);
     return Column(
       children: <Widget>[
         Align(
@@ -113,6 +142,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           min: 1,
           max: 5,
           divisions: 4,
+          activeColor: theme.accentColor,
           value: value,
           onChanged: (value) {
             setState(() {
@@ -165,19 +195,19 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         },
       ),
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          label,
-          style: theme.textTheme.headline,
-        ),
-        ButtonBar(
-          alignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: buttons,
-        ),
-      ],
+    return Container(
+      padding: EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(label),
+          ButtonBar(
+            alignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: buttons,
+          ),
+        ],
+      ),
     );
   }
 
@@ -223,6 +253,19 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     );
   }
 
+  Widget _buildFreeForm({String labelText}) {
+    return Container(
+      padding: EdgeInsets.only(top: 5, bottom: 5),
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: labelText,
+          border: OutlineInputBorder(borderSide: BorderSide(width: 1)),
+        ),
+        maxLines: 5,
+      ),
+    );
+  }
+
   Widget _buildThirdPage(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,44 +274,44 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           context: context,
           label: 'Was the end of the game predictable?',
           value: bloc.endPredictable,
-          onChange: _onDidWin,
+          onChange: (value) {
+            setState(() {
+              bloc.endPredictable = value;
+            });
+          },
         ),
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'If yes, why?'
-          ),
-          maxLines: 5,
+        _buildFreeForm(
+          labelText: 'If so, why?',
         ),
         _buildChoiceButtonBar(
           context: context,
-          label: 'Would you play again',
+          label: 'Would you play again?',
           value: bloc.playAgain,
-          onChange: _onDidWin,
+          onChange: (value) {
+            setState(() {
+              bloc.playAgain = value;
+            });
+          },
         ),
         _buildChoiceButtonBar(
           context: context,
-          label: 'Would you buy this',
+          label: 'Would you buy this?',
           value: bloc.buy,
-          onChange: _onDidWin,
+          onChange: (value) {
+            setState(() {
+              bloc.buy = value;
+            });
+          },
         ),
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'What is one thing you would change?'
-          ),
-          maxLines: 5,
+        _buildFreeForm(
+          labelText: 'What is one thing you would change?',
         ),
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Wat was your favorite part of this game?'
-          ),
-          maxLines: 5,
+        _buildFreeForm(
+          labelText: 'What was your favorite part of this game?',
         ),
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Additional comments?'
-          ),
-          maxLines: 5,
-        ),
+        _buildFreeForm(
+          labelText: 'Additional comments?',
+        )
       ],
     );
   }

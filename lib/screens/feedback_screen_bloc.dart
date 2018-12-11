@@ -1,11 +1,9 @@
+import 'package:unpub/models.dart';
 
-enum DiscreetAnswer {
-  Yes,
-  No,
-  Maybe
-}
+enum DiscreetAnswer { Yes, No, Maybe }
 
 class FeedbackScreenBloc {
+  GameSummary selectedGame;
 
   bool didWin = true;
   double gameLength = 3;
@@ -25,7 +23,5 @@ class FeedbackScreenBloc {
   String favoritePart;
   String additionalComments;
 
-  Future<void> submitFeedback() async {
-    
-  }
+  Future<void> submitFeedback() async {}
 }

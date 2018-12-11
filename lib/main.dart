@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:unpub/screens/game_list_screen.dart';
 
-import 'screens/game_list.dart';
 import 'screens/feedback_screen.dart';
 
 void main() => runApp(MyApp());
@@ -11,15 +11,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Color.fromARGB(255, 46, 85, 152),
+        primaryColorLight: Color.fromARGB(255, 99, 129, 201),
+        primaryColorDark: Color.fromARGB(255, 00, 45, 105),
+        accentColor: Color.fromARGB(255, 228, 28, 36),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'UNPUB'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  const MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
@@ -29,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  List<BottomNavigationBarItem> _tabs = [
+  final List<BottomNavigationBarItem> _tabs = [
     BottomNavigationBarItem(title: Text('Games'), icon: Icon(Icons.gamepad)),
     BottomNavigationBarItem(title: Text('Events'), icon: Icon(Icons.event)),
     BottomNavigationBarItem(title: Text('Feedback'), icon: Icon(Icons.feedback))
@@ -52,9 +55,6 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       bottomNavigationBar: BottomNavigationBar(
         items: _tabs,
         currentIndex: _currentIndex,
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage>
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
-        return _buildGameList();
+        return GameListScreen();
       case 1:
         return Center(
           child: Text('Events'),
@@ -79,9 +79,6 @@ class _MyHomePageState extends State<MyHomePage>
       case 2:
         return FeedbackScreen();
     }
-  }
-
-  Widget _buildGameList() {
-    return Center(child: GameList());
+    return Container();
   }
 }

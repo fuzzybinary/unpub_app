@@ -8,7 +8,7 @@ part of 'models.dart';
 
 GameSummary _$GameSummaryFromJson(Map<String, dynamic> json) {
   return GameSummary()
-    ..id = json['ID'] as String
+    ..id = json['id'] as String
     ..owner = json['owner'] as String
     ..game = json['game'] as String
     ..designer = json['designer'] as String
@@ -16,18 +16,18 @@ GameSummary _$GameSummaryFromJson(Map<String, dynamic> json) {
     ..categories = json['categories'] == null
         ? null
         : GameSummary.categoryStringToIds(json['categories'] as String)
-    ..categoryNames = json['categoryNames'] == null
+    ..categoryNames = json['group_concat(c.catname)'] == null
         ? null
-        : splitString(json['categoryNames'] as String);
+        : splitString(json['group_concat(c.catname)'] as String);
 }
 
 Map<String, dynamic> _$GameSummaryToJson(GameSummary instance) =>
     <String, dynamic>{
-      'ID': instance.id,
+      'id': instance.id,
       'owner': instance.owner,
       'game': instance.game,
       'designer': instance.designer,
       'description': instance.description,
       'categories': instance.categories,
-      'categoryNames': instance.categoryNames
+      'group_concat(c.catname)': instance.categoryNames
     };

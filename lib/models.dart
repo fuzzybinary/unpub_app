@@ -8,7 +8,6 @@ List<String> splitString(String string) {
 
 @JsonSerializable()
 class GameSummary {
-  @JsonKey(name:'ID')
   String id;
   String owner;
   String game;
@@ -16,18 +15,23 @@ class GameSummary {
   String description;
   @JsonKey(fromJson: categoryStringToIds)
   List<int> categories;
-  @JsonKey(fromJson: splitString)
+  @JsonKey(name: 'group_concat(c.catname)', fromJson: splitString)
   List<String> categoryNames;
 
   GameSummary();
-  
-  factory GameSummary.fromJson(Map<String, dynamic> json) => _$GameSummaryFromJson(json);
+
+  factory GameSummary.fromJson(Map<String, dynamic> json) =>
+      _$GameSummaryFromJson(json);
+
+  String get categoryString {
+    return categoryNames?.join(', ') ?? 'None';
+  }
 
   static List<int> categoryStringToIds(String categories) {
     final categoryIds = <int>[];
-    for(final idString in categories.split(',')) {
+    for (final idString in categories.split(',')) {
       final val = int.tryParse(idString);
-      if(val != null) {
+      if (val != null) {
         categoryIds.add(val);
       }
     }
