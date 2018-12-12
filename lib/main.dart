@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
         primaryColorLight: Color.fromARGB(255, 99, 129, 201),
         primaryColorDark: Color.fromARGB(255, 00, 45, 105),
         accentColor: Color.fromARGB(255, 228, 28, 36),
+        bottomAppBarColor: Color.fromARGB(255, 46, 85, 152),
       ),
       home: MyHomePage(title: 'UNPUB'),
     );
@@ -55,14 +56,24 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: _tabs,
-        currentIndex: _currentIndex,
-        onTap: (value) {
-          setState(() {
-            _currentIndex = value;
-          });
-        },
+      bottomNavigationBar: Theme(
+        data: ThemeData(
+          canvasColor: Color.fromARGB(255, 46, 85, 152),
+          primaryColor: Colors.white,
+          textTheme: TextTheme(
+            caption: TextStyle(color: Colors.white54) 
+          ),
+        ),
+        child: BottomNavigationBar(
+          items: _tabs,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _currentIndex,
+          onTap: (value) {
+            setState(() {
+              _currentIndex = value;
+            });
+          },
+        ),
       ),
       body: _buildBody(),
     );

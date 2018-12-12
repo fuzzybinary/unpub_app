@@ -14,44 +14,56 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text('Game', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.all(20),
-              child: _buildGameTitle(),
-            ),
-            Text('Game Session Overview', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(20),
-              child: _buildFirstPage(context),
-            ),
-            Text('Game Ratings', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(20),
-              child: _buildSecondPage(context),
-            ),
-            Text('Game Comments', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(20),
-              child: _buildThirdPage(context),
-            ),
-          ],
+    return Column(
+      children: <Widget>[
+        IntrinsicHeight(
+          child: AppBar(
+            title: Text('Feedback'),
+          ),
         ),
-      ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text('Game', style: theme.textTheme.headline),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border(top: BorderSide(width: 1))),
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.all(20),
+                    child: _buildGameTitle(),
+                  ),
+                  Text('Game Session Overview',
+                      style: theme.textTheme.headline),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border(top: BorderSide(width: 1))),
+                    padding: EdgeInsets.all(20),
+                    child: _buildFirstPage(context),
+                  ),
+                  Text('Game Ratings', style: theme.textTheme.headline),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border(top: BorderSide(width: 1))),
+                    padding: EdgeInsets.all(20),
+                    child: _buildSecondPage(context),
+                  ),
+                  Text('Game Comments', style: theme.textTheme.headline),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border(top: BorderSide(width: 1))),
+                    padding: EdgeInsets.all(20),
+                    child: _buildThirdPage(context),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
