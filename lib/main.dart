@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unpub/screens/events_screen.dart';
 import 'package:unpub/screens/game_list_screen.dart';
 
 import 'screens/feedback_screen.dart';
@@ -85,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage>
         return GameListScreen();
       case 1:
         return Center(
-          child: Text('Events'),
+          child: EventsScreen(),
         );
       case 2:
         return FeedbackScreen();

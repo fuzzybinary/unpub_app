@@ -31,3 +31,33 @@ Map<String, dynamic> _$GameSummaryToJson(GameSummary instance) =>
       'categories': instance.categories,
       'group_concat(c.catname)': instance.categoryNames
     };
+
+EventsResponse _$EventsResponseFromJson(Map<String, dynamic> json) {
+  return EventsResponse(
+      recent: (json['recent'] as List)
+          ?.map((e) =>
+              e == null ? null : Event.fromJson(e as Map<String, dynamic>))
+          ?.toList(),
+      future: (json['future'] as List)
+          ?.map((e) =>
+              e == null ? null : Event.fromJson(e as Map<String, dynamic>))
+          ?.toList());
+}
+
+Map<String, dynamic> _$EventsResponseToJson(EventsResponse instance) =>
+    <String, dynamic>{'recent': instance.recent, 'future': instance.future};
+
+Event _$EventFromJson(Map<String, dynamic> json) {
+  return Event(
+      id: json['ID'] as String,
+      name: json['name'] as String,
+      startDate: json['startdate'] == null
+          ? null
+          : parseDate(json['startdate'] as String));
+}
+
+Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
+      'ID': instance.id,
+      'name': instance.name,
+      'startdate': instance.startDate?.toIso8601String()
+    };

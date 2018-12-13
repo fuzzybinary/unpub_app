@@ -17,4 +17,14 @@ class UnpubService {
     }
     return list;
   }
+
+  Future<EventsResponse> fetchEvents() async {
+    final response = await http.get('http://unpub.net/web/public/events.php');
+    if(response.statusCode == 200) {
+      final jsonVal = json.decode(response.body);
+      final val = EventsResponse.fromJson(jsonVal);
+      return val;  
+    }
+    return null;
+  }
 }
