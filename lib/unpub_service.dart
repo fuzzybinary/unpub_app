@@ -26,5 +26,29 @@ class UnpubService {
     );
     final newUrl = response.request.url;
     print(newUrl);
+    return true;
+  }
+
+  Future<EventsResponse> fetchEvents() async {
+    final response = await http.get('http://unpub.net/web/public/events.php');
+    if (response.statusCode == 200) {
+      final jsonVal = json.decode(response.body);
+      final val = EventsResponse.fromJson(jsonVal);
+      return val;
+    }
+    return null;
+  }
+
+  Future<List<GameSummary>> fetchGamesAtEvent(Event event) async {
+    final list = <GameSummary>[];
+    final response = await http
+        .get('http://unpub.net/web/public/gamesevents.php?eid=${event.id}');
+    if (response.statusCode == 200) {
+      final List jsonVal = json.decode(response.body);
+      for (final val in jsonVal) {
+        list.add(GameSummary.fromJson(val));
+      }
+    }
+    return list;
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:unpub/models.dart';
 import 'package:unpub/screens/game_details_screen.dart';
 import 'package:unpub/unpub_service.dart';
+import 'package:unpub/widgets/game_list_item.dart';
 
 class GameList extends StatefulWidget {
   final bool forSelection;
@@ -50,29 +51,6 @@ class _GameListState extends State<GameList> {
     }
   }
 
-  Widget _buildListItem(BuildContext context, GameSummary game) {
-    final theme = Theme.of(context);
-    return InkWell(
-      onTap: () => _navigateToGame(game),
-      child: Container(
-        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              game.game,
-              style: theme.textTheme.title,
-            ),
-            Text(
-              game.designer,
-              style: theme.textTheme.caption,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _filterGames();
@@ -89,7 +67,10 @@ class _GameListState extends State<GameList> {
                 itemCount: _filteredGames.length,
                 separatorBuilder: (context, index) => Divider(),
                 itemBuilder: (context, index) {
-                  return _buildListItem(context, _filteredGames[index]);
+                  return GameListItem(
+                    game: _filteredGames[index],
+                    onTap: (game) => _navigateToGame(game),
+                  );
                 },
               );
             default:
