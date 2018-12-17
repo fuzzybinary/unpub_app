@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:unpub/models.dart';
+import 'package:unpub/screens/feedback_screen.dart';
 
 class GameDetailsScreen extends StatelessWidget {
   final GameSummary game;
@@ -52,7 +53,7 @@ class GameDetailsScreen extends StatelessWidget {
                   ),
                   padding: EdgeInsets.fromLTRB(30, 8, 30, 8),
                   color: theme.accentColor,
-                  onPressed: () {},
+                  onPressed: () => _leaveFeedbackTapped(context),
                 ),
               )
             ],
@@ -60,5 +61,12 @@ class GameDetailsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _leaveFeedbackTapped(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => FeedbackScreen(
+              initialGame: game,
+            )));
   }
 }

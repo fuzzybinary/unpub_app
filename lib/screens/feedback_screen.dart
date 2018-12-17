@@ -1,69 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:unpub/models.dart';
 import 'package:unpub/screens/feedback_screen_bloc.dart';
 import 'package:unpub/screens/game_list_screen.dart';
 
-class FeedbackScreen extends StatefulWidget {
+@immutable
+class _SimpleTextField extends StatelessWidget {
+  final TextEditingController _controller;
+
+  final ValueChanged<String> onChanged;
+  final String label;
+  final String hintText;
+  final Icon icon;
+
+  _SimpleTextField({
+    Key key,
+    String value,
+    this.onChanged,
+    this.label,
+    this.hintText,
+    this.icon,
+  })  : _controller = TextEditingController(
+          text: value,
+        ),
+        super(key: key);
+
   @override
-  _FeedbackScreenState createState() => _FeedbackScreenState();
+  Widget build(BuildContext context) {
+    return TextField(
+      decoration:
+          InputDecoration(labelText: label, hintText: hintText, icon: icon),
+      onChanged: onChanged,
+    );
+  }
+}
+
+class FeedbackScreen extends StatefulWidget {
+  const FeedbackScreen({Key key, this.initialGame}) : super(key: key);
+
+  final GameSummary initialGame;
+
+  @override
+  _FeedbackScreenState createState() => _FeedbackScreenState(initialGame);
 }
 
 class _FeedbackScreenState extends State<FeedbackScreen> {
-  FeedbackScreenBloc bloc = FeedbackScreenBloc();
+  final FeedbackScreenBloc bloc;
+
+  _FeedbackScreenState(GameSummary initialGame)
+      : bloc = FeedbackScreenBloc(initialGame);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      children: <Widget>[
-        IntrinsicHeight(
-          child: AppBar(
-            title: Text('Feedback'),
+    return Material(
+      child: Column(
+        children: <Widget>[
+          IntrinsicHeight(
+            child: AppBar(
+              title: Text('Feedback'),
+            ),
           ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text('Game', style: theme.textTheme.headline),
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border(top: BorderSide(width: 1))),
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.all(20),
-                    child: _buildGameTitle(),
-                  ),
-                  Text('Game Session Overview',
-                      style: theme.textTheme.headline),
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border(top: BorderSide(width: 1))),
-                    padding: EdgeInsets.all(20),
-                    child: _buildFirstPage(context),
-                  ),
-                  Text('Game Ratings', style: theme.textTheme.headline),
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border(top: BorderSide(width: 1))),
-                    padding: EdgeInsets.all(20),
-                    child: _buildSecondPage(context),
-                  ),
-                  Text('Game Comments', style: theme.textTheme.headline),
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border(top: BorderSide(width: 1))),
-                    padding: EdgeInsets.all(20),
-                    child: _buildThirdPage(context),
-                  ),
-                ],
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Text('Game', style: theme.textTheme.headline),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border(top: BorderSide(width: 1))),
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.all(20),
+                      child: _buildGameTitle(),
+                    ),
+                    Text('Game Session Overview',
+                        style: theme.textTheme.headline),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border(top: BorderSide(width: 1))),
+                      padding: EdgeInsets.all(20),
+                      child: _buildFirstPage(context),
+                    ),
+                    Text('Game Ratings', style: theme.textTheme.headline),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border(top: BorderSide(width: 1))),
+                      padding: EdgeInsets.all(20),
+                      child: _buildSecondPage(context),
+                    ),
+                    Text('Game Comments', style: theme.textTheme.headline),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border(top: BorderSide(width: 1))),
+                      padding: EdgeInsets.all(20),
+                      child: _buildThirdPage(context),
+                    ),
+                    Container(
+                        alignment: Alignment.center,
+                        child: FlatButton(
+                          child: Text('Submit Feedback'),
+                          onPressed: () => bloc.submitFeedback(),
+                        )),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -103,29 +150,45 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Players',
-            icon: Icon(Icons.person),
-          ),
+        _SimpleTextField(
+          value: bloc.players,
+          label: 'Players',
+          icon: Icon(Icons.people),
+          onChanged: (value) {
+            setState(() {
+              bloc.players = value;
+            });
+          },
         ),
-        TextFormField(
-          decoration: InputDecoration(
-              labelText: 'Game Time',
-              hintText: 'in minutes',
-              icon: Icon(Icons.timer)),
+        _SimpleTextField(
+          value: bloc.gameTime,
+          label: 'Game Length',
+          icon: Icon(Icons.timer),
+          onChanged: (value) {
+            setState(() {
+              bloc.gameTime = value;
+            });
+          },
         ),
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'First place score',
-            icon: Icon(Icons.timeline),
-          ),
+        _SimpleTextField(
+          value: bloc.firstPlaceScore,
+          label: 'First Place Store',
+          icon: Icon(Icons.timeline),
+          onChanged: (value) {
+            setState(() {
+              bloc.firstPlaceScore = value;
+            });
+          },
         ),
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Last place score',
-            icon: Icon(Icons.timeline),
-          ),
+        _SimpleTextField(
+          value: bloc.lastPlaceStore,
+          label: 'Last Place Store',
+          icon: Icon(Icons.timeline),
+          onChanged: (value) {
+            setState(() {
+              bloc.lastPlaceStore = value;
+            });
+          },
         ),
         _buildChoiceButtonBar(
           context: context,
@@ -265,15 +328,23 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     );
   }
 
-  Widget _buildFreeForm({String labelText}) {
+  Widget _buildFreeForm(
+      {String labelText, String value, ValueChanged<String> onChanged}) {
     return Container(
       padding: EdgeInsets.only(top: 5, bottom: 5),
-      child: TextFormField(
+      child: TextField(
         decoration: InputDecoration(
           labelText: labelText,
           border: OutlineInputBorder(borderSide: BorderSide(width: 1)),
         ),
         maxLines: 5,
+        //controller:
+        //    TextEditingController.fromValue(TextEditingValue(text: value)),
+        onChanged: (value) {
+          setState(() {
+            onChanged(value);
+          });
+        },
       ),
     );
   }
@@ -294,6 +365,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         ),
         _buildFreeForm(
           labelText: 'If so, why?',
+          value: bloc.predictableWhy,
+          onChanged: (value) => bloc.predictableWhy = value,
         ),
         _buildChoiceButtonBar(
           context: context,
@@ -317,12 +390,18 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         ),
         _buildFreeForm(
           labelText: 'What is one thing you would change?',
+          value: bloc.oneChange,
+          onChanged: (value) => bloc.oneChange = value,
         ),
         _buildFreeForm(
           labelText: 'What was your favorite part of this game?',
+          value: bloc.favoritePart,
+          onChanged: (value) => bloc.favoritePart = value,
         ),
         _buildFreeForm(
           labelText: 'Additional comments?',
+          value: bloc.additionalComments,
+          onChanged: (value) => bloc.additionalComments = value,
         )
       ],
     );
