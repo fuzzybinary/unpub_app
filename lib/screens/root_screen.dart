@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:unpub/screens/feedback_screen.dart';
+import 'package:unpub/screens/events_screen.dart';
+import 'package:unpub/screens/feedback/feedback_screen.dart';
+import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
 import 'package:unpub/screens/game_list_screen.dart';
 
 enum RootScreenTab {
@@ -26,13 +28,12 @@ class _RootScreenState extends State<RootScreen>
     BottomNavigationBarItem(title: Text('Events'), icon: Icon(Icons.event)),
     BottomNavigationBarItem(title: Text('Feedback'), icon: Icon(Icons.feedback))
   ];
-  final List<Widget> _screens = [
-    GameListScreen(),
-    Text('Events'),
-    FeedbackScreen()
-  ];
+
   int _currentIndex = 0;
   TabController _tabController;
+  // This allows us to retain entered information on the feedback screen
+  // even if you navigate away from the widget.
+  final FeedbackScreenBloc _feedbackBloc = FeedbackScreenBloc();
 
   @override
   void initState() {
@@ -49,14 +50,22 @@ class _RootScreenState extends State<RootScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: _tabs,
-        currentIndex: _currentIndex,
-        onTap: (value) {
-          setState(() {
-            _currentIndex = value;
-          });
-        },
+      bottomNavigationBar: Theme(
+        data: ThemeData(
+          canvasColor: Color.fromARGB(255, 46, 85, 152),
+          primaryColor: Colors.white,
+          textTheme: TextTheme(caption: TextStyle(color: Colors.white54)),
+        ),
+        child: BottomNavigationBar(
+          items: _tabs,
+          currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
+          onTap: (value) {
+            setState(() {
+              _currentIndex = value;
+            });
+          },
+        ),
       ),
       body: _buildBody(),
     );
@@ -65,11 +74,11 @@ class _RootScreenState extends State<RootScreen>
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
-        return _screens[0];
+        return GameListScreen();
       case 1:
-        return Center(child: _screens[1]);
+        return EventsScreen();
       case 2:
-        return _screens[2];
+        return FeedbackScreen(bloc: _feedbackBloc);
     }
     return Container();
   }

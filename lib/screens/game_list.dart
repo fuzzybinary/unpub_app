@@ -33,8 +33,9 @@ class _GameListState extends State<GameList> {
 
   void _filterGames() {
     if (widget.filter != null && _games != null) {
+      final lowerFilter = widget.filter.toLowerCase();
       _filteredGames = _games.where((summary) {
-        return summary.game.contains(widget.filter);
+        return summary.game.toLowerCase().contains(lowerFilter);
       }).toList();
     } else {
       _filteredGames = _games;

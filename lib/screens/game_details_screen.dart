@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:unpub/models.dart';
-import 'package:unpub/screens/feedback_screen.dart';
+import 'package:unpub/screens/feedback/feedback_screen.dart';
+import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
 
 class GameDetailsScreen extends StatelessWidget {
   final GameSummary game;
@@ -65,8 +66,7 @@ class GameDetailsScreen extends StatelessWidget {
 
   void _leaveFeedbackTapped(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => FeedbackScreen(
-              initialGame: game,
-            )));
+        builder: (context) =>
+            FeedbackScreen(bloc: FeedbackScreenBloc(selectedGame: game))));
   }
 }

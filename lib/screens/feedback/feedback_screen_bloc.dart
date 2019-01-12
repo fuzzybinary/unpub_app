@@ -4,32 +4,57 @@ import 'package:unpub/unpub_service.dart';
 enum DiscreetAnswer { Yes, No, Maybe }
 
 class FeedbackScreenBloc {
-  FeedbackScreenBloc(this.selectedGame);
-
   GameSummary selectedGame;
 
-  String players = '';
-  String gameTime = '';
-  String firstPlaceScore = '';
-  String lastPlaceStore = '';
+  String players;
+  String gameTime;
+  String firstPlaceScore;
+  String lastPlaceStore;
 
-  bool didWin = true;
-  double gameLength = 3;
-  double easeOfLearning = 3;
-  double playerDownTime = 3;
-  double gameDecisions = 3;
-  double interactivity = 3;
-  double originality = 3;
-  double fun = 3;
+  bool didWin;
+  double gameLength;
+  double easeOfLearning;
+  double playerDownTime;
+  double gameDecisions;
+  double interactivity;
+  double originality;
+  double fun;
 
-  DiscreetAnswer endPredictable = DiscreetAnswer.Yes;
-  String predictableWhy = '';
-  DiscreetAnswer playAgain = DiscreetAnswer.Yes;
-  DiscreetAnswer buy = DiscreetAnswer.Yes;
+  DiscreetAnswer endPredictable;
+  String predictableWhy;
+  DiscreetAnswer playAgain;
+  DiscreetAnswer buy;
 
-  String oneChange = '';
-  String favoritePart = '';
-  String additionalComments = '';
+  String oneChange;
+  String favoritePart;
+  String additionalComments;
+
+  FeedbackScreenBloc({this.selectedGame}) {
+    reset();
+  }
+
+  void reset() {
+    players = '';
+    gameTime = '';
+    firstPlaceScore = '';
+    lastPlaceStore = '';
+    didWin = true;
+    gameLength = 3;
+    easeOfLearning = 3;
+    playerDownTime = 3;
+    gameDecisions = 3;
+    interactivity = 3;
+    originality = 3;
+    fun = 3;
+    endPredictable = DiscreetAnswer.Yes;
+    predictableWhy = '';
+    playAgain = DiscreetAnswer.Yes;
+    buy = DiscreetAnswer.Yes;
+
+    oneChange = '';
+    favoritePart = '';
+    additionalComments = '';
+  }
 
   Future<bool> submitFeedback() async {
     // TODO: This should be a model handed off to the UnpubService but serialize here for now
