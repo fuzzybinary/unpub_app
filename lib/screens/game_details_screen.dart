@@ -65,8 +65,12 @@ class GameDetailsScreen extends StatelessWidget {
   }
 
   void _leaveFeedbackTapped(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            FeedbackScreen(bloc: FeedbackScreenBloc(selectedGame: game))));
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) {
+        return FeedbackScreen(
+          bloc: FeedbackScreenBloc(selectedGame: game),
+        );
+      }),
+    );
   }
 }

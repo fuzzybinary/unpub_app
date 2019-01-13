@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:unpub/screens/feedback/choice_button_bar.dart';
+import 'package:unpub/screens/feedback/confirm_dialog.dart';
 
 import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
 import 'package:unpub/screens/feedback/simple_text_field.dart';
+import 'package:unpub/screens/feedback/submit_feedback_dialog.dart';
 import 'package:unpub/screens/game_list_screen.dart';
 import 'package:unpub/widgets/ensure_visible_widget.dart';
 
@@ -53,6 +55,12 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           IntrinsicHeight(
             child: AppBar(
               title: Text('Feedback'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () => _clearForm(context),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -63,6 +71,20 @@ class _FeedbackScreenState extends State<FeedbackScreen>
         ],
       ),
     );
+  }
+
+  Future<void> _clearForm(BuildContext context) async {
+    final shouldClear = await showDialog(
+      context: context,
+      builder: (context) => ConfirmDialog(
+            text: 'Are you sure you want to clear this feedback form?',
+          ),
+    );
+    if (shouldClear != null && shouldClear) {
+      setState(() {
+        bloc.reset();
+      });
+    }
   }
 
   Widget _buildGameTitle(ThemeData theme) {
@@ -120,9 +142,17 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           ),
           Container(
             alignment: Alignment.center,
-            child: FlatButton(
-              child: Text('Submit Feedback'),
-              onPressed: () => bloc.submitFeedback(),
+            child: RaisedButton(
+              child: Text(
+                'Submit Feedback',
+                style: theme.textTheme.button.copyWith(
+                  fontSize: 25,
+                  color: Colors.white,
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(30, 8, 30, 8),
+              color: theme.accentColor,
+              onPressed: () => _submitFeedback(),
             ),
           ),
         ],
@@ -138,24 +168,22 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           value: bloc.players,
           label: 'Players',
           icon: Icon(Icons.people),
+          keyboardType: TextInputType.number,
           focus: focusPlayers,
           nextFocus: focusGameLength,
           onChanged: (value) {
-            setState(() {
-              bloc.players = value;
-            });
+            bloc.players = value;
           },
         ),
         SimpleTextField(
           value: bloc.gameTime,
           label: 'Game Length',
           icon: Icon(Icons.timer),
+          keyboardType: TextInputType.number,
           focus: focusGameLength,
           nextFocus: focusFirstPlayerScore,
           onChanged: (value) {
-            setState(() {
-              bloc.gameTime = value;
-            });
+            bloc.gameTime = value;
           },
         ),
         SimpleTextField(
@@ -163,22 +191,20 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           label: 'First Place Store',
           icon: Icon(Icons.timeline),
           focus: focusFirstPlayerScore,
+          keyboardType: TextInputType.number,
           nextFocus: focusLastPlayerScore,
           onChanged: (value) {
-            setState(() {
-              bloc.firstPlaceScore = value;
-            });
+            bloc.firstPlaceScore = value;
           },
         ),
         SimpleTextField(
           value: bloc.lastPlaceStore,
           label: 'Last Place Store',
           icon: Icon(Icons.timeline),
+          keyboardType: TextInputType.number,
           focus: focusLastPlayerScore,
           onChanged: (value) {
-            setState(() {
-              bloc.lastPlaceStore = value;
-            });
+            bloc.lastPlaceStore = value;
           },
         ),
         ChoiceButtonBar(
@@ -282,12 +308,9 @@ class _FeedbackScreenState extends State<FeedbackScreen>
           ),
           focusNode: focusNode,
           maxLines: 5,
-          //controller:
-          //    TextEditingController.fromValue(TextEditingValue(text: value)),
+          controller: TextEditingController(text: value),
           onChanged: (value) {
-            setState(() {
-              onChanged(value);
-            });
+            onChanged(value);
           },
         ),
       ),
@@ -351,5 +374,19 @@ class _FeedbackScreenState extends State<FeedbackScreen>
         )
       ],
     );
+  }
+
+  Future<void> _submitFeedback() async {
+    final success = await showDialog(
+      context: context,
+      builder: (context) => SubmitFeedbackDialog(bloc: bloc),
+      barrierDismissible: false,
+    );
+
+    if (success != null && success) {
+      setState(() {
+        bloc.reset();
+      });
+    }
   }
 }

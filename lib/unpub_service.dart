@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -24,9 +25,14 @@ class UnpubService {
       '${url}feedback/',
       body: fields,
     );
-    final newUrl = response.request.url;
-    print(newUrl);
-    return true;
+    bool success = false;
+    if (response.statusCode == 302) {
+      final location = response.headers[HttpHeaders.locationHeader];
+      final uri = Uri.parse(location);
+      final query = uri.queryParameters;
+      success = query['status']?.toLowerCase()?.compareTo('true') == 0;
+    }
+    return success;
   }
 
   Future<EventsResponse> fetchEvents() async {

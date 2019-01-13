@@ -34,6 +34,7 @@ class FeedbackScreenBloc {
   }
 
   void reset() {
+    selectedGame = null;
     players = '';
     gameTime = '';
     firstPlaceScore = '';
@@ -69,8 +70,8 @@ class FeedbackScreenBloc {
       'learn': easeOfLearning.toStringAsFixed(0),
       'downtime': playerDownTime.toStringAsFixed(0),
       'decision': gameDecisions.toStringAsFixed(0),
-      'interactive': gameDecisions.toStringAsFixed(0),
-      'original': gameDecisions.toStringAsFixed(0),
+      'interactive': interactivity.toStringAsFixed(0),
+      'original': originality.toStringAsFixed(0),
       'fun': fun.toStringAsFixed(0),
       'predict': _serializeDiscreetAnswer(endPredictable),
       'predicty': predictableWhy,
@@ -87,11 +88,11 @@ class FeedbackScreenBloc {
   String _serializeDiscreetAnswer(DiscreetAnswer answer) {
     switch (answer) {
       case DiscreetAnswer.Yes:
-        return '3';
+        return '1';
       case DiscreetAnswer.Maybe:
         return '2';
       case DiscreetAnswer.No:
-        return '1';
+        return '3';
     }
     return '1';
   }
