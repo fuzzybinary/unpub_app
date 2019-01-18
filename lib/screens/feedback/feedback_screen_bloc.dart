@@ -29,8 +29,10 @@ class FeedbackScreenBloc {
   String favoritePart;
   String additionalComments;
 
-  FeedbackScreenBloc({this.selectedGame}) {
+  FeedbackScreenBloc({GameSummary selectedGame}) {
     reset();
+    // ignore: prefer_initializing_formals
+    this.selectedGame = selectedGame;
   }
 
   void reset() {

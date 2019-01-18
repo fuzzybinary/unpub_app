@@ -24,21 +24,16 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Events'),
-      ),
-      body: FutureBuilder(
-        future: _initialLoadFuture,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return _buildList();
-            default:
-              return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
+    return FutureBuilder(
+      future: _initialLoadFuture,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            return _buildList();
+          default:
+            return Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 

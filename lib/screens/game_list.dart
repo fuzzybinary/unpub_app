@@ -6,10 +6,10 @@ import 'package:unpub/unpub_service.dart';
 import 'package:unpub/widgets/game_list_item.dart';
 
 class GameList extends StatefulWidget {
-  final bool forSelection;
   final String filter;
+  final ValueChanged gameSelected;
 
-  const GameList({this.forSelection = false, this.filter});
+  const GameList({Key key, this.filter, this.gameSelected}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GameListState();
@@ -42,16 +42,6 @@ class _GameListState extends State<GameList> {
     }
   }
 
-  void _navigateToGame(GameSummary game) {
-    if (widget.forSelection) {
-      Navigator.of(context).pop(game);
-    } else {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => GameDetailsScreen(game: game),
-      ));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     _filterGames();
@@ -70,7 +60,7 @@ class _GameListState extends State<GameList> {
                 itemBuilder: (context, index) {
                   return GameListItem(
                     game: _filteredGames[index],
-                    onTap: (game) => _navigateToGame(game),
+                    onTap: widget.gameSelected,
                   );
                 },
               );
