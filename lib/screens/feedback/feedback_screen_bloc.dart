@@ -35,6 +35,23 @@ class FeedbackScreenBloc {
     this.selectedGame = selectedGame;
   }
 
+  String requiredFieldValidator(String fieldName, String value) {
+    if (value.isEmpty) {
+      return '$fieldName cannot be empty.';
+    }
+    return null;
+  }
+
+  String requiredNumberValidator(String fieldName, String value) {
+    if (value.isEmpty) {
+      return '$fieldName cannot be empty.';
+    }
+    if (int.tryParse(value) == null) {
+      return '$fieldName should be a number.';
+    }
+    return null;
+  }
+
   void reset() {
     selectedGame = null;
     players = '';

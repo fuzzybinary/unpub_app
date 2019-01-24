@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:unpub/screens/feedback/choice_button_bar.dart';
 import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
+import 'package:unpub/screens/feedback/info_dialog.dart';
+import 'package:unpub/screens/feedback/raiting_slider.dart';
 import 'package:unpub/screens/feedback/simple_text_field.dart';
 import 'package:unpub/screens/feedback/submit_feedback_dialog.dart';
 import 'package:unpub/screens/game_choice_screen.dart';
-import 'package:unpub/widgets/ensure_visible_widget.dart';
 
 class FeedbackWidget extends StatefulWidget {
   final FeedbackScreenBloc bloc;
@@ -28,6 +29,8 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
   final FocusNode focusOneChange = FocusNode();
   final FocusNode focusFavoritePart = FocusNode();
   final FocusNode focusAdditionalComments = FocusNode();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   _FeedbackWidgetState(this.bloc);
 
@@ -62,54 +65,58 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Container(
         padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text('Game', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.all(20),
-              child: _buildGameTitle(theme),
-            ),
-            Text('Game Session Overview', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(20),
-              child: _buildFirstPage(),
-            ),
-            Text('Game Ratings', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(20),
-              child: _buildSecondPage(),
-            ),
-            Text('Game Comments', style: theme.textTheme.headline),
-            Container(
-              decoration:
-                  BoxDecoration(border: Border(top: BorderSide(width: 1))),
-              padding: EdgeInsets.all(20),
-              child: _buildThirdPage(),
-            ),
-            Container(
-              alignment: Alignment.center,
-              child: RaisedButton(
-                child: Text(
-                  'Submit Feedback',
-                  style: theme.textTheme.button.copyWith(
-                    fontSize: 25,
-                    color: Colors.white,
-                  ),
-                ),
-                padding: EdgeInsets.fromLTRB(30, 8, 30, 8),
-                color: theme.accentColor,
-                onPressed: () => _submitFeedback(),
+        child: Form(
+          key: _formKey,
+          autovalidate: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text('Game', style: theme.textTheme.headline),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border(top: BorderSide(width: 1))),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(20),
+                child: _buildGameTitle(theme),
               ),
-            ),
-          ],
+              Text('Game Session Overview', style: theme.textTheme.headline),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border(top: BorderSide(width: 1))),
+                padding: EdgeInsets.all(20),
+                child: _buildFirstPage(),
+              ),
+              Text('Game Ratings', style: theme.textTheme.headline),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border(top: BorderSide(width: 1))),
+                padding: EdgeInsets.all(20),
+                child: _buildSecondPage(),
+              ),
+              Text('Game Comments', style: theme.textTheme.headline),
+              Container(
+                decoration:
+                    BoxDecoration(border: Border(top: BorderSide(width: 1))),
+                padding: EdgeInsets.all(20),
+                child: _buildThirdPage(),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: RaisedButton(
+                  child: Text(
+                    'Submit Feedback',
+                    style: theme.textTheme.button.copyWith(
+                      fontSize: 25,
+                      color: Colors.white,
+                    ),
+                  ),
+                  padding: EdgeInsets.fromLTRB(30, 8, 30, 8),
+                  color: theme.accentColor,
+                  onPressed: () => _submitFeedback(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -123,6 +130,7 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
           value: bloc.players,
           label: 'Players',
           icon: Icon(Icons.people),
+          validator: (value) => bloc.requiredNumberValidator('Players', value),
           keyboardType: TextInputType.number,
           focus: focusPlayers,
           nextFocus: focusGameLength,
@@ -133,6 +141,8 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
         SimpleTextField(
           value: bloc.gameTime,
           label: 'Game Length',
+          validator: (value) =>
+              bloc.requiredNumberValidator('Game Length', value),
           icon: Icon(Icons.timer),
           keyboardType: TextInputType.number,
           focus: focusGameLength,
@@ -144,6 +154,8 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
         SimpleTextField(
           value: bloc.firstPlaceScore,
           label: 'First Place Store',
+          validator: (value) =>
+              bloc.requiredNumberValidator('First Place Score', value),
           icon: Icon(Icons.timeline),
           focus: focusFirstPlayerScore,
           keyboardType: TextInputType.number,
@@ -155,6 +167,8 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
         SimpleTextField(
           value: bloc.lastPlaceStore,
           label: 'Last Place Store',
+          validator: (value) =>
+              bloc.requiredNumberValidator('Last Place Score', value),
           icon: Icon(Icons.timeline),
           keyboardType: TextInputType.number,
           focus: focusLastPlayerScore,
@@ -176,99 +190,44 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
     );
   }
 
-  Widget _buildRaitingSlider(
-      {@required String text,
-      @required double value,
-      @required ValueChanged<double> onChanged}) {
-    final theme = Theme.of(context);
-    return Column(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(text),
-        ),
-        Slider(
-          label: value.toStringAsFixed(0),
-          min: 1,
-          max: 5,
-          divisions: 4,
-          activeColor: theme.accentColor,
-          value: value,
-          onChanged: (value) {
-            setState(() {
-              onChanged(value);
-            });
-          },
-        )
-      ],
-    );
-  }
-
   Widget _buildSecondPage() {
     return Column(
       children: <Widget>[
-        _buildRaitingSlider(
-          text: 'Game Length',
-          value: bloc.gameLength,
-          onChanged: (value) => bloc.gameLength = value,
-        ),
-        _buildRaitingSlider(
+        RaitingSlider(
+            text: 'Game Length',
+            value: bloc.gameLength,
+            onChanged: (value) => setState(() => bloc.gameLength = value)),
+        RaitingSlider(
           text: 'Ease of Learning',
           value: bloc.easeOfLearning,
-          onChanged: (value) => bloc.easeOfLearning = value,
+          onChanged: (value) => setState(() => bloc.easeOfLearning = value),
         ),
-        _buildRaitingSlider(
+        RaitingSlider(
           text: 'Player Down Time',
           value: bloc.playerDownTime,
-          onChanged: (value) => bloc.playerDownTime = value,
+          onChanged: (value) => setState(() => bloc.playerDownTime = value),
         ),
-        _buildRaitingSlider(
+        RaitingSlider(
           text: 'Game Decisions',
           value: bloc.gameDecisions,
-          onChanged: (value) => bloc.gameDecisions = value,
+          onChanged: (value) => setState(() => bloc.gameDecisions = value),
         ),
-        _buildRaitingSlider(
+        RaitingSlider(
           text: 'Interactivity',
           value: bloc.interactivity,
-          onChanged: (value) => bloc.interactivity = value,
+          onChanged: (value) => setState(() => bloc.interactivity = value),
         ),
-        _buildRaitingSlider(
+        RaitingSlider(
           text: 'Originality',
           value: bloc.originality,
-          onChanged: (value) => bloc.originality = value,
+          onChanged: (value) => setState(() => bloc.originality = value),
         ),
-        _buildRaitingSlider(
+        RaitingSlider(
           text: 'Fun / Enjoyable',
           value: bloc.fun,
-          onChanged: (value) => bloc.fun = value,
+          onChanged: (value) => setState(() => bloc.fun = value),
         ),
       ],
-    );
-  }
-
-  Widget _buildFreeForm({
-    String labelText,
-    String value,
-    ValueChanged<String> onChanged,
-    FocusNode focusNode,
-  }) {
-    return Container(
-      padding: EdgeInsets.only(top: 5, bottom: 5),
-      child: EnsureVisibleWidget(
-        focusNode: focusNode,
-        child: TextField(
-          decoration: InputDecoration(
-            labelText: labelText,
-            border: OutlineInputBorder(borderSide: BorderSide(width: 1)),
-          ),
-          focusNode: focusNode,
-          maxLines: 5,
-          controller: TextEditingController(text: value),
-          onChanged: (value) {
-            onChanged(value);
-          },
-        ),
-      ),
     );
   }
 
@@ -285,10 +244,11 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
             });
           },
         ),
-        _buildFreeForm(
-          labelText: 'If so, why?',
+        SimpleTextField(
+          label: 'If so, why?',
           value: bloc.predictableWhy,
-          focusNode: focusPredictWhy,
+          focus: focusPredictWhy,
+          freeForm: true,
           onChanged: (value) => bloc.predictableWhy = value,
         ),
         ChoiceButtonBar(
@@ -309,22 +269,29 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
             });
           },
         ),
-        _buildFreeForm(
-          labelText: 'What is one thing you would change?',
+        SimpleTextField(
+          label: 'What is one thing you would change?',
           value: bloc.oneChange,
-          focusNode: focusOneChange,
+          focus: focusOneChange,
+          freeForm: true,
+          validator: (value) =>
+              bloc.requiredFieldValidator('This field', value),
           onChanged: (value) => bloc.oneChange = value,
         ),
-        _buildFreeForm(
-          labelText: 'What was your favorite part of this game?',
+        SimpleTextField(
+          label: 'What was your favorite part of this game?',
           value: bloc.favoritePart,
-          focusNode: focusFavoritePart,
+          focus: focusFavoritePart,
+          freeForm: true,
+          validator: (value) =>
+              bloc.requiredFieldValidator('This field', value),
           onChanged: (value) => bloc.favoritePart = value,
         ),
-        _buildFreeForm(
-          labelText: 'Additional comments?',
+        SimpleTextField(
+          label: 'Additional comments?',
           value: bloc.additionalComments,
-          focusNode: focusAdditionalComments,
+          focus: focusAdditionalComments,
+          freeForm: true,
           onChanged: (value) => bloc.additionalComments = value,
         )
       ],
@@ -332,6 +299,24 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
   }
 
   Future<void> _submitFeedback() async {
+    if (bloc.selectedGame == null) {
+      showDialog(
+          context: context,
+          builder: (context) =>
+              InfoDialog(text: 'You must select a game to give feedback to.'));
+      return;
+    }
+    final state = _formKey.currentState;
+    if (!state.validate()) {
+      showDialog(
+        context: context,
+        builder: (context) => InfoDialog(
+              text: 'Please check that you\'ve filled out all required fields',
+            ),
+      );
+      return;
+    }
+
     final success = await showDialog(
       context: context,
       builder: (context) => SubmitFeedbackDialog(bloc: bloc),

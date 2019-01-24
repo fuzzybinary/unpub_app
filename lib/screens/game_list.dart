@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:unpub/models.dart';
-import 'package:unpub/screens/game_details_screen.dart';
 import 'package:unpub/unpub_service.dart';
 import 'package:unpub/widgets/game_list_item.dart';
 

@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:unpub/screens/feedback/choice_button_bar.dart';
 import 'package:unpub/screens/feedback/confirm_dialog.dart';
 
 import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
 import 'package:unpub/screens/feedback/feedback_widget.dart';
-import 'package:unpub/screens/feedback/simple_text_field.dart';
-import 'package:unpub/screens/feedback/submit_feedback_dialog.dart';
-import 'package:unpub/screens/game_choice_screen.dart';
-import 'package:unpub/widgets/ensure_visible_widget.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({Key key, this.bloc}) : super(key: key);
