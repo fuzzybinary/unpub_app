@@ -1,4 +1,4 @@
-package com.example.unpub
+package com.fuzzybinary.unpub
 
 import android.os.Bundle
 
