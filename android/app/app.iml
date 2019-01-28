@@ -118,6 +118,7 @@
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/check-libraries" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/check-manifest" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/checkDebugClasspath" />
+      <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/checkReleaseClasspath" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/compatible_screen_manifest" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/flutter" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/incremental" />
@@ -130,10 +131,12 @@
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/instant_run_split_apk_resources" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/javac" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/jniLibs" />
+      <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/linked_res_for_bundle" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/lint_jar" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/manifest-checker" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/merged_assets" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/merged_manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/module_bundle" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/prebuild" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/processed_res" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/reload-dex" />
@@ -148,6 +151,7 @@
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/kotlin" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/outputs" />
+      <excludeFolder url="file://$MODULE_DIR$/../../build/app/reports" />
       <excludeFolder url="file://$MODULE_DIR$/../../build/app/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 27 Platform" jdkType="Android SDK" />

@@ -10,3 +10,5 @@ ios/.generated/
 android/.gradle/
 packages
 .flutter-plugins
+android/app/release
+local.properties
