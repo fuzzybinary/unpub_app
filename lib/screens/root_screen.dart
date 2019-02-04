@@ -7,6 +7,7 @@ import 'package:unpub/screens/feedback/feedback_widget.dart';
 import 'package:unpub/screens/game_details_screen.dart';
 import 'package:unpub/screens/game_list.dart';
 import 'package:unpub/screens/game_search_bar.dart';
+import 'package:unpub/unpub_service.dart';
 
 enum RootScreenTab {
   Games,
@@ -15,10 +16,14 @@ enum RootScreenTab {
 }
 
 class RootScreen extends StatefulWidget {
-  const RootScreen({Key key, this.initialTab = RootScreenTab.Games})
-      : super(key: key);
-
   final RootScreenTab initialTab;
+  final UnpubService service;
+
+  const RootScreen({
+    Key key,
+    this.initialTab = RootScreenTab.Games,
+    @required this.service,
+  }) : super(key: key);
 
   @override
   _RootScreenState createState() => _RootScreenState();
@@ -34,16 +39,19 @@ class _RootScreenState extends State<RootScreen>
 
   int _currentIndex = 0;
   TabController _tabController;
+  UnpubService _service;
   // This allows us to retain entered information on the feedback screen
   // even if you navigate away from the widget.
-  final FeedbackScreenBloc _feedbackBloc = FeedbackScreenBloc();
+  FeedbackScreenBloc _feedbackBloc;
 
   String _gameSearchString = '';
 
   @override
   void initState() {
     super.initState();
+    _service = UnpubService();
     _tabController = TabController(vsync: this, length: _tabs.length);
+    _feedbackBloc = FeedbackScreenBloc(service: _service);
   }
 
   @override
@@ -107,14 +115,23 @@ class _RootScreenState extends State<RootScreen>
       case 0:
         return GameList(
           filter: _gameSearchString,
+          service: widget.service,
           gameSelected: (game) => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => GameDetailsScreen(game: game),
+                builder: (context) => GameDetailsScreen(
+                      game: game,
+                      service: widget.service,
+                    ),
               )),
         );
       case 1:
-        return EventsScreen();
+        return EventsScreen(
+          service: widget.service,
+        );
       case 2:
-        return FeedbackWidget(bloc: _feedbackBloc);
+        return FeedbackWidget(
+          bloc: _feedbackBloc,
+          service: widget.service,
+        );
     }
     return Container();
   }

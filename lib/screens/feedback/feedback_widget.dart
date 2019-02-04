@@ -7,11 +7,17 @@ import 'package:unpub/screens/feedback/raiting_slider.dart';
 import 'package:unpub/screens/feedback/simple_text_field.dart';
 import 'package:unpub/screens/feedback/submit_feedback_dialog.dart';
 import 'package:unpub/screens/game_choice_screen.dart';
+import 'package:unpub/unpub_service.dart';
 
 class FeedbackWidget extends StatefulWidget {
+  final UnpubService service;
   final FeedbackScreenBloc bloc;
 
-  const FeedbackWidget({Key key, @required this.bloc}) : super(key: key);
+  const FeedbackWidget({
+    Key key,
+    @required this.bloc,
+    @required this.service,
+  }) : super(key: key);
 
   @override
   _FeedbackWidgetState createState() => _FeedbackWidgetState(bloc);
@@ -51,7 +57,9 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
       ),
       onPressed: () async {
         final newGame = await Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => GameChoiceScreen(),
+          builder: (context) => GameChoiceScreen(
+                service: widget.service,
+              ),
         ));
         if (newGame != null) {
           bloc.selectedGame = newGame;

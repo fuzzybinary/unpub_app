@@ -4,6 +4,7 @@ import 'package:unpub/unpub_service.dart';
 enum DiscreetAnswer { Yes, No, Maybe }
 
 class FeedbackScreenBloc {
+  UnpubService _service;
   GameSummary selectedGame;
 
   String players;
@@ -29,7 +30,8 @@ class FeedbackScreenBloc {
   String favoritePart;
   String additionalComments;
 
-  FeedbackScreenBloc({GameSummary selectedGame}) {
+  FeedbackScreenBloc({GameSummary selectedGame, UnpubService service})
+      : _service = service {
     reset();
     // ignore: prefer_initializing_formals
     this.selectedGame = selectedGame;
@@ -101,7 +103,7 @@ class FeedbackScreenBloc {
       'comments': additionalComments
     };
 
-    return await UnpubService().submitFeedback(fields);
+    return await _service.submitFeedback(fields);
   }
 
   String _serializeDiscreetAnswer(DiscreetAnswer answer) {

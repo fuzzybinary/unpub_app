@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unpub/screens/root_screen.dart';
+import 'package:unpub/unpub_service.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +16,9 @@ class MyApp extends StatelessWidget {
         accentColor: Color.fromARGB(255, 228, 28, 36),
         bottomAppBarColor: Color.fromARGB(255, 46, 85, 152),
       ),
-      home: RootScreen(),
+      home: RootScreen(
+        service: UnpubService(),
+      ),
     );
   }
 }

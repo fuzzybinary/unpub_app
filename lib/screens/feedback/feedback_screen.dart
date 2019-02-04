@@ -4,11 +4,17 @@ import 'package:unpub/screens/feedback/confirm_dialog.dart';
 
 import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
 import 'package:unpub/screens/feedback/feedback_widget.dart';
+import 'package:unpub/unpub_service.dart';
 
 class FeedbackScreen extends StatefulWidget {
-  const FeedbackScreen({Key key, this.bloc}) : super(key: key);
-
   final FeedbackScreenBloc bloc;
+  final UnpubService service;
+
+  const FeedbackScreen({
+    Key key,
+    this.bloc,
+    @required this.service,
+  }) : super(key: key);
 
   @override
   _FeedbackScreenState createState() => _FeedbackScreenState(bloc);
@@ -31,7 +37,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           )
         ],
       ),
-      body: FeedbackWidget(bloc: bloc),
+      body: FeedbackWidget(
+        bloc: bloc,
+        service: widget.service,
+      ),
     );
   }
 

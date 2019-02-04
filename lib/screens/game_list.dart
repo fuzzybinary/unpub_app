@@ -7,8 +7,14 @@ import 'package:unpub/widgets/game_list_item.dart';
 class GameList extends StatefulWidget {
   final String filter;
   final ValueChanged gameSelected;
+  final UnpubService service;
 
-  const GameList({Key key, this.filter, this.gameSelected}) : super(key: key);
+  const GameList({
+    Key key,
+    this.filter,
+    this.gameSelected,
+    @required this.service,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GameListState();
@@ -22,11 +28,16 @@ class _GameListState extends State<GameList> {
   @override
   void initState() {
     super.initState();
-    _initialLoadFuture = _refreshGames();
+    if (widget.service.cachedGames != null) {
+      _games = widget.service.cachedGames;
+      _filterGames();
+    } else {
+      _initialLoadFuture = _refreshGames(ignoreCache: false);
+    }
   }
 
-  Future<void> _refreshGames() async {
-    _games = await UnpubService().fetchGameSummaries();
+  Future<void> _refreshGames({bool ignoreCache = true}) async {
+    _games = await widget.service.fetchGameSummaries(ignoreCache: ignoreCache);
     _filterGames();
   }
 
@@ -41,35 +52,45 @@ class _GameListState extends State<GameList> {
     }
   }
 
+  Widget _buildBody() {
+    return ListView.separated(
+      padding: EdgeInsets.only(top: 5),
+      itemCount: _filteredGames.length,
+      separatorBuilder: (context, index) => Divider(),
+      itemBuilder: (context, index) {
+        return GameListItem(
+          game: _filteredGames[index],
+          onTap: widget.gameSelected,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _filterGames();
 
-    return RefreshIndicator(
-      onRefresh: _refreshGames,
-      child: FutureBuilder(
+    Widget child;
+    if (_initialLoadFuture != null) {
+      child = FutureBuilder(
         future: _initialLoadFuture,
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              return ListView.separated(
-                padding: EdgeInsets.only(top: 5),
-                itemCount: _filteredGames.length,
-                separatorBuilder: (context, index) => Divider(),
-                itemBuilder: (context, index) {
-                  return GameListItem(
-                    game: _filteredGames[index],
-                    onTap: widget.gameSelected,
-                  );
-                },
-              );
+              return _buildBody();
             default:
               return Center(
                 child: CircularProgressIndicator(),
               );
           }
         },
-      ),
+      );
+    } else {
+      child = _buildBody();
+    }
+    return RefreshIndicator(
+      onRefresh: _refreshGames,
+      child: child,
     );
   }
 }

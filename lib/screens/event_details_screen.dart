@@ -5,9 +5,14 @@ import 'package:unpub/unpub_service.dart';
 import 'package:unpub/widgets/game_list_item.dart';
 
 class EventDetailsScreen extends StatefulWidget {
+  final UnpubService service;
   final Event event;
 
-  const EventDetailsScreen({Key key, @required this.event}) : super(key: key);
+  const EventDetailsScreen({
+    Key key,
+    @required this.event,
+    @required this.service,
+  }) : super(key: key);
 
   @override
   _EventDetailsScreenState createState() => _EventDetailsScreenState();
@@ -24,7 +29,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   }
 
   Future _loadEvent() async {
-    _games = await UnpubService().fetchGamesAtEvent(widget.event);
+    _games = await widget.service.fetchGamesAtEvent(widget.event);
   }
 
   Widget _buildGameList() {
@@ -43,7 +48,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   void _navigateToGame(GameSummary game) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => GameDetailsScreen(game: game),
+      builder: (context) => GameDetailsScreen(
+            game: game,
+            service: widget.service,
+          ),
     ));
   }
 
@@ -58,7 +66,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              return _buildGameList();
+              if (_games != null && _games.isNotEmpty) {
+                return _buildGameList();
+              }
+              return Container(
+                alignment: Alignment.center,
+                child: Text(
+                  'No games registered for this event yet..',
+                  style: Theme.of(context).textTheme.title,
+                ),
+              );
             default:
               return Center(
                 child: CircularProgressIndicator(),

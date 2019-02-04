@@ -3,11 +3,16 @@ import 'package:flutter/widgets.dart';
 import 'package:unpub/models.dart';
 import 'package:unpub/screens/feedback/feedback_screen.dart';
 import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
+import 'package:unpub/unpub_service.dart';
 
 class GameDetailsScreen extends StatelessWidget {
   final GameSummary game;
+  final UnpubService service;
 
-  const GameDetailsScreen({@required this.game}) : super();
+  const GameDetailsScreen({
+    @required this.game,
+    @required this.service,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +73,11 @@ class GameDetailsScreen extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) {
         return FeedbackScreen(
-          bloc: FeedbackScreenBloc(selectedGame: game),
+          bloc: FeedbackScreenBloc(
+            selectedGame: game,
+            service: service,
+          ),
+          service: service,
         );
       }),
     );

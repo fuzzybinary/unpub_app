@@ -8,6 +8,13 @@ import 'package:unpub/unpub_service.dart';
 DateFormat _format = DateFormat('EEEE MMMM dd, yyyy');
 
 class EventsScreen extends StatefulWidget {
+  final UnpubService service;
+
+  const EventsScreen({
+    Key key,
+    @required this.service,
+  }) : super(key: key);
+
   @override
   _EventsScreenState createState() => _EventsScreenState();
 }
@@ -19,31 +26,44 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   void initState() {
     super.initState();
-    _initialLoadFuture = _refreshEvents();
+    if (widget.service.cachedEvents != null) {
+      _events = widget.service.cachedEvents;
+    } else {
+      _initialLoadFuture = _refreshEvents();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initialLoadFuture,
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            return _buildList();
-          default:
-            return Center(child: CircularProgressIndicator());
-        }
-      },
-    );
+    Widget child;
+    if (_initialLoadFuture != null) {
+      child = FutureBuilder(
+        future: _initialLoadFuture,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return _buildList();
+            default:
+              return Center(child: CircularProgressIndicator());
+          }
+        },
+      );
+    } else {
+      child = _buildList();
+    }
+    return child;
   }
 
   Future<void> _refreshEvents() async {
-    _events = await UnpubService().fetchEvents();
+    _events = await widget.service.fetchEvents();
   }
 
   void _navigateToEvent(Event event) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => EventDetailsScreen(event: event)));
+        builder: (context) => EventDetailsScreen(
+              event: event,
+              service: widget.service,
+            )));
   }
 
   Widget _buildEventItem(Event event) {
