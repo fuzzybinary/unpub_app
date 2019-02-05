@@ -54,8 +54,8 @@ class _EventsScreenState extends State<EventsScreen> {
     return child;
   }
 
-  Future<void> _refreshEvents() async {
-    _events = await widget.service.fetchEvents();
+  Future<void> _refreshEvents({ignoreCache = false}) async {
+    _events = await widget.service.fetchEvents(ignoreCache: ignoreCache);
   }
 
   void _navigateToEvent(Event event) {
@@ -91,7 +91,7 @@ class _EventsScreenState extends State<EventsScreen> {
 
   Widget _buildList() {
     return RefreshIndicator(
-      onRefresh: _refreshEvents,
+      onRefresh: () => _refreshEvents(ignoreCache: true),
       child: ListView.separated(
         padding: EdgeInsets.only(top: 5),
         itemCount: _events.future.length,

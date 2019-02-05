@@ -1,4 +1,6 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unpub/models.dart';
+import 'package:unpub/screens/email_screen.dart';
 import 'package:unpub/unpub_service.dart';
 
 enum DiscreetAnswer { Yes, No, Maybe }
@@ -102,6 +104,20 @@ class FeedbackScreenBloc {
       'favorite': favoritePart,
       'comments': additionalComments
     };
+
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final name = prefs.getString(NameKey);
+      final email = prefs.getString(EmailKey);
+      if (name != null && name.isNotEmpty) {
+        fields['oname'] = name;
+      }
+      if (email != null && email.isNotEmpty) {
+        fields['oemail'] = email;
+      }
+    } catch (Exception) {
+      //ignore: empty_catch
+    }
 
     return await _service.submitFeedback(fields);
   }

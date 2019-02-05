@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:unpub/screens/email_screen.dart';
 import 'package:unpub/screens/events_screen.dart';
 import 'package:unpub/screens/feedback/confirm_dialog.dart';
 import 'package:unpub/screens/feedback/feedback_screen_bloc.dart';
@@ -34,7 +35,9 @@ class _RootScreenState extends State<RootScreen>
   final List<BottomNavigationBarItem> _tabs = [
     BottomNavigationBarItem(title: Text('Games'), icon: Icon(Icons.gamepad)),
     BottomNavigationBarItem(title: Text('Events'), icon: Icon(Icons.event)),
-    BottomNavigationBarItem(title: Text('Feedback'), icon: Icon(Icons.feedback))
+    BottomNavigationBarItem(
+        title: Text('Feedback'), icon: Icon(Icons.feedback)),
+    BottomNavigationBarItem(title: Text('Settings'), icon: Icon(Icons.email)),
   ];
 
   int _currentIndex = 0;
@@ -132,6 +135,8 @@ class _RootScreenState extends State<RootScreen>
           bloc: _feedbackBloc,
           service: widget.service,
         );
+      case 3:
+        return EmailScreen();
     }
     return Container();
   }

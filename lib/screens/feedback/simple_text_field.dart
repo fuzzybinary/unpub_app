@@ -44,6 +44,14 @@ class _SimpleTextFieldState extends State<SimpleTextField> {
   }
 
   @override
+  void didUpdateWidget(SimpleTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller?.removeListener(_handleControllerChanged);
+    _controller = TextEditingController(text: widget.value);
+    _controller?.addListener(_handleControllerChanged);
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _controller.removeListener(_handleControllerChanged);
